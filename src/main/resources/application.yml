@@ -1,0 +1,7 @@
+server:
+  port: 7000
+spring:
+  application:
+    name: @artifactId@
+logging:
+  config: classpath:log4j2.yml
