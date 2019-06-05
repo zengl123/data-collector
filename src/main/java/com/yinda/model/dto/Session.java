@@ -1,4 +1,4 @@
-package com.yinda.model.vo;
+package com.yinda.model.dto;
 
 import io.netty.channel.Channel;
 

@@ -24,7 +24,7 @@ import java.util.List;
 public class Decoder4LoggingOnly extends ByteToMessageDecoder {
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         String hex = buf2Str(in);
         log.info("ip={},hex = {}", ctx.channel().remoteAddress(), hex);
         ByteBuf buf = Unpooled.buffer();

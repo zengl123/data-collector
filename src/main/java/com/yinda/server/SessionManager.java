@@ -1,6 +1,6 @@
 package com.yinda.server;
 
-import com.yinda.model.vo.Session;
+import com.yinda.model.dto.Session;
 
 import java.util.List;
 import java.util.Map;

@@ -19,13 +19,25 @@ public class Jt808Constant {
 
     public static final Charset STRING_CHARSET = Charset.forName(STRING_ENCODING);
     /**
+     * 平台登录
+     */
+    public static final int LOGIN = 0x01f0;
+    /**
+     * 平台登录应答
+     */
+    public static final int LOGIN_RESP = 0x81f0;
+    /**
+     * 平台登出
+     */
+    public static final int OUT = 0x01f1;
+    /**
      * 标识位
      */
     public static final int PKG_DELIMITER = 0x7e;
     /**
      * 客户端发呆15分钟后,服务器主动断开连接
      */
-    public static int TCP_CLIENT_IDLE_MINUTES = 15;
+    public static int TCP_CLIENT_IDLE_MINUTES = 1;
     /**
      * 终端通用应答
      */
@@ -50,10 +62,7 @@ public class Jt808Constant {
      * 位置信息汇报
      */
     public static final int MSG_ID_TERMINAL_LOCATION_INFO_UPLOAD = 0x0200;
-    /**
-     * 胎压数据透传
-     */
-    public static final int MSG_ID_TERMINAL_TRANSMISSION_TYRE_PRESSURE = 0x0600;
+
     /**
      * 查询终端参数应答
      */
@@ -74,4 +83,17 @@ public class Jt808Constant {
      * 查询终端参数
      */
     public static final int CMD_TERMINAL_PARAM_QUERY = 0x8104;
+    /**
+     * 终端控制
+     */
+    public static final int CMD_TERMINAL_CONTROL = 0X8105;
+    /**
+     * 位置信息查询
+     */
+    public static final int QUERY_LOCATION_MSG = 0X8201;
+    /**
+     * 位置信息查询应答
+     */
+    public static final int QUERY_LOCATION_RESP = 0X0201;
+
 }

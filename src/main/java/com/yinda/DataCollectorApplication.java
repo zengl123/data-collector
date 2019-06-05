@@ -1,5 +1,8 @@
 package com.yinda;
 
+import com.yinda.server.TcpServer;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -16,8 +19,8 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  * @UpdateRemark:
  * @Version:
  */
-@SpringBootApplication(exclude= {DataSourceAutoConfiguration.class})
-public class DataCollectorApplication {
+@SpringBootApplication
+public class DataCollectorApplication  {
 
     public static void main(String[] args) {
         SpringApplication.run(DataCollectorApplication.class, args);

@@ -1,7 +1,10 @@
 package com.yinda.server;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.yinda.constant.Jt808Constant;
+import com.yinda.exception.MyException;
 import com.yinda.handler.TcpServerHandler;
+import com.yinda.utils.Decoder4LoggingOnly;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -45,7 +48,7 @@ public class TcpServer {
         this.port = port;
     }
 
-    private void bind() throws Exception {
+    private void bind() throws InterruptedException {
         this.bossGroup = new NioEventLoopGroup();
         this.workerGroup = new NioEventLoopGroup();
         ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -54,8 +57,7 @@ public class TcpServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch) {
-                        ch.pipeline().addLast("idleStateHandler",
-                                new IdleStateHandler(Jt808Constant.TCP_CLIENT_IDLE_MINUTES, 0, 0, TimeUnit.MINUTES));
+                        ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(Jt808Constant.TCP_CLIENT_IDLE_MINUTES, 0, 0, TimeUnit.MINUTES));
                         ch.pipeline().addLast(new Decoder4LoggingOnly());
                         // 1024表示单条消息的最大长度，解码器在查找分隔符的时候，达到该长度还没找到的话会抛异常
                         ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024, Unpooled.copiedBuffer(new byte[]{0x7e}), Unpooled.copiedBuffer(new byte[]{0x7e, 0x7e})));
@@ -70,18 +72,24 @@ public class TcpServer {
 
     public synchronized void startServer() {
         if (this.isRunning) {
-            throw new IllegalStateException(this.getName() + " is already started .");
+            throw new IllegalStateException(this.getName() + "已启动，不能重复启动");
         }
         this.isRunning = true;
-
-        new Thread(() -> {
-            try {
-                this.bind();
-            } catch (Exception e) {
-                log.info("TCP服务启动出错:{}", e.getMessage());
-                e.printStackTrace();
-            }
-        }, this.getName()).start();
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("gps-thread-%d").build();
+        ExecutorService pool = new ThreadPoolExecutor(10, 1000, 0L,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingDeque<>(256),
+                namedThreadFactory,
+                new ThreadPoolExecutor.AbortPolicy());
+        pool.execute(() -> {
+                    try {
+                        this.bind();
+                    } catch (InterruptedException e) {
+                        throw new MyException("startServer 异常 [{}]", e);
+                    }
+                }
+        );
+        pool.shutdown();
     }
 
     public synchronized void stopServer() {
@@ -105,11 +113,6 @@ public class TcpServer {
     }
 
     private String getName() {
-        return "TCP-Server";
-    }
-
-    public static void main(String[] args) {
-        TcpServer server = new TcpServer(8879);
-        server.startServer();
+        return "终端通讯服务端";
     }
 }
